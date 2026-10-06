@@ -6,14 +6,14 @@
     Appetizers: {
       id: "appetizers",
       ar: "المقبلات",
-      image: "assets/olive_traced.jpeg",
+      image: "assets/olive_2.jpeg",
       art: "tr",
       layout: "split-end",
     },
     "Main Menu": {
       id: "main-menu",
       ar: "الأطباق الرئيسية",
-      image: "assets/jog.jpeg",
+      image: "assets/tagine_fassi.jpeg",
       art: "bl",
       layout: "split",
     },

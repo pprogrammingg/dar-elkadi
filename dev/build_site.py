@@ -26,8 +26,8 @@ PUBLIC_DIRS = {
 
 ASSET_FILES = [
     "logo_only_1.jpeg",
-    "olive_traced.jpeg",
-    "jog.jpeg",
+    "olive_2.jpeg",
+    "tagine_fassi.jpeg",
     "dessert.jpeg",
     "pour.jpeg",
     "lantern_traced.png",

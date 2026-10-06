@@ -7,14 +7,14 @@
         "description": "",
         "image": "",
         "price": 9,
-        "price_note": ""
+        "price_note": "per person"
       },
       {
         "item_name": "Moroccan Salad",
         "description": "",
         "image": "",
         "price": 8,
-        "price_note": ""
+        "price_note": "per person"
       },
       {
         "item_name": "Briwat Cheese",
@@ -35,7 +35,7 @@
         "description": "",
         "image": "",
         "price": 4,
-        "price_note": ""
+        "price_note": "per person"
       },
       {
         "item_name": "Focaccia",
@@ -50,24 +50,24 @@
     "section": "Main Menu",
     "items": [
       {
-        "item_name": "Fassi Chicken Lemon & Olives",
+        "item_name": "Fassi Chicken",
         "description": "",
         "image": "",
-        "price": 16,
-        "price_note": "per person"
+        "price": 18,
+        "price_note": "250 g"
       },
       {
-        "item_name": "M'hammar — Lamb",
+        "item_name": "Beef — L'ham bel Barkouk",
         "description": "",
         "image": "",
-        "price": 20,
-        "price_note": "per person"
+        "price": 22,
+        "price_note": "250 g"
       },
       {
-        "item_name": "Dorade Royal",
+        "item_name": "Dorade Royal / Sea Bass",
         "description": "",
         "image": "",
-        "price": 25,
+        "price": 28,
         "price_note": "per person"
       }
     ]
@@ -77,14 +77,14 @@
     "items": [
       {
         "item_name": "Ghriba Louz",
-        "description": "",
+        "description": "Almond Cookies",
         "image": "",
         "price": 12,
         "price_note": "6 pieces"
       },
       {
         "item_name": "M'hancha Louz",
-        "description": "",
+        "description": "Almond Cookies",
         "image": "",
         "price": 18,
         "price_note": "6 pieces"
@@ -93,7 +93,7 @@
         "item_name": "Tiramisu",
         "description": "",
         "image": "",
-        "price": 6,
+        "price": 9,
         "price_note": "1 cup"
       }
     ]
@@ -112,14 +112,14 @@
         "item_name": "Sparkling Water",
         "description": "",
         "image": "",
-        "price": null,
+        "price": 2.5,
         "price_note": ""
       },
       {
         "item_name": "Water",
         "description": "",
         "image": "",
-        "price": null,
+        "price": 1.5,
         "price_note": ""
       }
     ]
