@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /campaign
+Disallow: /campaign.html
+
+Sitemap: https://darelkadi.ca/sitemap.xml

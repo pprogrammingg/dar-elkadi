@@ -31,6 +31,8 @@ ASSET_FILES = [
     "dessert.jpeg",
     "pour.jpeg",
     "lantern_traced.png",
+    "og-image.jpg",
+    "apple-touch-icon.png",
 ]
 PATTERN_FILES = [
     "islamic_corner.svg",
@@ -85,7 +87,7 @@ def main() -> int:
             OUT / "assets" / "patterns" / name,
         )
 
-    for name in ("_redirects", "_headers"):
+    for name in ("_redirects", "_headers", "robots.txt", "sitemap.xml"):
         src = ROOT / name
         if src.is_file():
             copy_file(src, OUT / name)
