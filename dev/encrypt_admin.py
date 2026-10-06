@@ -23,9 +23,16 @@ DATA = ROOT / "data"
 ITERATIONS = 250_000
 
 
-def _python() -> Path:
-    venv = ROOT / ".venv" / "bin" / "python"
-    return venv if venv.exists() else Path(sys.executable)
+def _reexec_in_venv() -> None:
+    try:
+        import cryptography  # noqa: F401
+        return
+    except ImportError:
+        pass
+    venv_dir = ROOT / ".venv"
+    venv = venv_dir / "bin" / "python"
+    if venv.exists() and Path(sys.prefix).resolve() != venv_dir.resolve():
+        os.execv(str(venv), [str(venv), __file__, *sys.argv[1:]])
 
 
 def load_password() -> str:
@@ -90,6 +97,7 @@ def encrypt_name(name: str, password: str) -> Path:
 
 
 def main() -> int:
+    _reexec_in_venv()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "names",
