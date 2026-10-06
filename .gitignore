@@ -5,6 +5,15 @@ _site/
 *.pyc
 __pycache__/
 
+# Admin secrets + plaintext vault sources (never publish)
+secrets/password
+secrets/*
+!secrets/password.example
+data/campaign.json
+data/*.json
+!data/menu.json
+!data/*.enc.json
+
 # Superseded / unused art — keep local, skip remote weight
 assets/olive.png
 assets/olive_2.png

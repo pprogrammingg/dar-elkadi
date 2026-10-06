@@ -1,0 +1,5 @@
+# Cloudflare Pages (free) — connect this repo in the CF dashboard
+# or deploy with: npx wrangler pages deploy _site --project-name=dar-elkadi
+name = "dar-elkadi"
+compatibility_date = "2024-10-01"
+pages_build_output_dir = "_site"

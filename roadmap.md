@@ -12,6 +12,18 @@ python3 dev/serve.py
 python3 dev/stop.py
 ```
 
+Cloudflare Pages (free) + `darelkadi.ca`:
+
+```bash
+# one-time: python3 -m venv .venv && .venv/bin/pip install cryptography
+# put password in secrets/password, then:
+python3 dev/encrypt_admin.py   # data/campaign.json → data/campaign.enc.json
+python3 dev/build_site.py      # → _site/
+```
+
+In Cloudflare: Pages project → build `python3 dev/build_site.py`, output `_site`, custom domain `darelkadi.ca`.
+Admin: `https://darelkadi.ca/campaign` → password gate (session for the tab).
+
 ## Sequence
 
 [x] design
@@ -41,6 +53,11 @@ python3 dev/stop.py
 [x] menu page look — olive parchment bg + black text; corner ornaments; islamic pattern section seps
 [x] start speed — embedded menu first paint; deferred chapters; lazy art; leaner fonts; lighter assets; cheap parchment grain
 [x] GitHub Pages — compressed JPEG art; lean deploy artifact; push `dar-elkadi` main
+[x] campaign tracker — `campaign.html` driven by `data/campaign.json` (local; not on Pages)
+[x] admin gate — AES-GCM encrypt via `secrets/password` (gitignored); `/campaign` unlock UI
+[x] Cloudflare Pages — `_site` build, `_redirects`/`_headers`, `darelkadi.ca` ready
+[x] campaign form — name / status / last contacted / feedback; stale-first sort; yellow→green rows
+[x] campaign form — name / status / last contacted / feedback; sort stale (&gt;30d) first
 
 ## design
 

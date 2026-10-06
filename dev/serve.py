@@ -24,6 +24,12 @@ DEFAULT_PORT = 8765
 HOST = os.environ.get("HOST", "127.0.0.1")
 HOME_PATH = "/index.html"
 
+# Pretty paths (same idea as Cloudflare _redirects)
+PRETTY_ROUTES = {
+    "/campaign": "/campaign.html",
+    "/campaign/": "/campaign.html",
+}
+
 
 class DevHandler(SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
@@ -43,6 +49,11 @@ class DevHandler(SimpleHTTPRequestHandler):
             self.send_header("Location", HOME_PATH)
             self.end_headers()
             return
+        pretty = PRETTY_ROUTES.get(path)
+        if pretty:
+            self.path = pretty + (
+                "?" + self.path.split("?", 1)[1] if "?" in self.path else ""
+            )
         return super().do_GET()
 
 

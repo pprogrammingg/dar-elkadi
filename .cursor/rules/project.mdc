@@ -18,8 +18,16 @@ Treat these as out of scope unless the user explicitly asks:
 
 Prefer reading / editing:
 
-- `index.html`, `css/`, `js/`, `assets/`, `menu.md`, `roadmap.md`
-- `dev/serve.py`, `dev/stop.py`, `.github/workflows/`
+- `index.html`, `campaign.html`, `css/`, `js/`, `assets/`, `menu.md`, `roadmap.md`
+- `dev/serve.py`, `dev/stop.py`, `dev/encrypt_admin.py`, `dev/build_site.py`
+- `.github/workflows/`, `_redirects`, `_headers`, `wrangler.toml`
+
+Admin / secrets:
+
+- Password lives in `secrets/password` (gitignored). Never commit it.
+- Edit plaintext `data/campaign.json` (gitignored), then `python3 dev/encrypt_admin.py`
+- Only `data/*.enc.json` ships to Cloudflare; gate unlocks in the browser
+- Host: Cloudflare Pages free → custom domain `darelkadi.ca`
 
 ## Roadmap
 

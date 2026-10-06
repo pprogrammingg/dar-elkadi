@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Campaign — Dar Elkadi</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Source+Sans+3:wght@400;500&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Source+Sans+3:wght@400;500&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="icon" href="assets/logo_only_1.jpeg" type="image/jpeg" />
+  </head>
+  <body class="campaign-page admin-page">
+    <header class="site-nav is-solid" id="site-nav">
+      <a class="nav-home" href="/">HOME</a>
+      <span class="nav-rule" aria-hidden="true"></span>
+      <div class="nav-end">
+        <a class="nav-link" href="/#menu">Menu</a>
+        <a class="nav-link" href="/#contact">Contact</a>
+      </div>
+    </header>
+
+    <div class="admin-gate" id="admin-gate">
+      <form class="admin-gate-card" data-gate-form autocomplete="off">
+        <p class="admin-gate-kicker">Private</p>
+        <h1 class="admin-gate-title">Enter password</h1>
+        <p class="admin-gate-copy">
+          Campaign data is encrypted from <code>campaign.json</code>. Enter the
+          admin password to unlock the outreach form.
+        </p>
+        <label class="admin-gate-label" for="admin-password">Password</label>
+        <input
+          class="admin-gate-input"
+          id="admin-password"
+          data-gate-input
+          type="password"
+          name="password"
+          autocomplete="current-password"
+          required
+        />
+        <p class="admin-gate-error" data-gate-error hidden></p>
+        <button class="admin-gate-submit" type="submit" data-gate-submit>
+          Unlock
+        </button>
+      </form>
+    </div>
+
+    <main class="campaign" id="campaign-panel" hidden>
+      <header class="campaign-head">
+        <p class="campaign-kicker">Outreach</p>
+        <h1>October 2026 campaign</h1>
+        <p class="campaign-objective" id="campaign-objective"></p>
+        <p class="campaign-meta">
+          <span id="campaign-count">0</span> contacts ·
+          <span id="campaign-stale">0</span> need outreach (&gt;30 days / never)
+        </p>
+        <div class="campaign-legend" aria-hidden="true">
+          <span class="campaign-legend-swatch campaign-legend-swatch--green"></span>
+          Recent
+          <span class="campaign-legend-swatch campaign-legend-swatch--yellow"></span>
+          Overdue / never
+        </div>
+        <div class="campaign-toolbar">
+          <p class="campaign-hint" id="campaign-hint">
+            Sorted by longest without contact first (30+ days / never), then
+            name. Edits autosave here; download JSON and run
+            <code>python3 dev/encrypt_admin.py</code> to ship.
+          </p>
+          <div class="campaign-actions">
+            <button type="button" class="campaign-btn" id="campaign-resort">
+              Re-sort
+            </button>
+            <button
+              type="button"
+              class="campaign-btn campaign-btn--solid"
+              id="campaign-download"
+            >
+              Download campaign.json
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <form id="campaign-form" class="campaign-form">
+        <div class="campaign-table-wrap">
+          <table class="campaign-table campaign-table--form">
+            <thead>
+              <tr>
+                <th scope="col" class="campaign-col-name">Name</th>
+                <th scope="col" class="campaign-col-status">Outreach status</th>
+                <th scope="col" class="campaign-col-last">Last contacted</th>
+                <th scope="col" class="campaign-col-feedback">Feedback</th>
+              </tr>
+            </thead>
+            <tbody id="campaign-body"></tbody>
+          </table>
+        </div>
+      </form>
+    </main>
+
+    <script src="js/gate.js"></script>
+    <script src="js/campaign.js" defer></script>
+  </body>
+</html>
