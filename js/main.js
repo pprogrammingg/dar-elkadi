@@ -86,10 +86,6 @@
           link.append(ar);
         }
 
-        const sub = document.createElement("p");
-        sub.className = "overview-sub";
-        sub.textContent = `${section.items.length} items`;
-        link.append(sub);
         return link;
       })
     );
