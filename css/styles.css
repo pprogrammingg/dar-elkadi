@@ -193,7 +193,6 @@ button {
   visibility: hidden;
   pointer-events: none;
 }
-
 .hero-video {
   position: absolute;
   inset: 0;

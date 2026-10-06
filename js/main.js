@@ -442,8 +442,9 @@
     ];
 
     const floatMeta = SECTIONS.filter((s) => s.float);
-    let sections = SECTIONS.map(({ id }) => $(id)).filter(Boolean);
-    let spySections = floatMeta.map(({ id }) => $(id)).filter(Boolean);
+    /* Look up by id each time: chapters are rebuilt when menu.json loads */
+    const byIds = (list) => list.map(({ id }) => $(id)).filter(Boolean);
+    const getSections = () => byIds(SECTIONS);
 
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
@@ -467,6 +468,7 @@
     })();
 
     const currentIndex = () => {
+      const sections = getSections();
       if (!sections.length) return 0;
       if (window.scrollY <= 8) return 0;
 
@@ -493,9 +495,10 @@
     };
 
     const syncBobEnds = (index) => {
-      if (!scrollBob || !sections.length) return;
+      const count = SECTIONS.length;
+      if (!scrollBob || !count) return;
       const atStart = index <= 0;
-      const atEnd = index >= sections.length - 1;
+      const atEnd = index >= count - 1;
       scrollBob.classList.toggle("is-start", atStart);
       scrollBob.classList.toggle("is-end", atEnd);
       if (scrollUp) {
@@ -522,7 +525,7 @@
     };
 
     const goToIndex = (index) => {
-      const target = sections[index];
+      const target = $(SECTIONS[index]?.id);
       if (!target) return;
       syncBobEnds(index);
       target.scrollIntoView({
@@ -557,14 +560,14 @@
 
     const updateSpy = () => {
       if (!floatLinks.length) return;
-      const current = activeSectionId(spySections);
+      const current = activeSectionId(byIds(floatMeta));
       floatLinks.forEach((link) => {
         link.classList.toggle("is-active", link.dataset.target === current);
       });
     };
 
     const updateScrollBob = () => {
-      if (sections.length) syncBobEnds(currentIndex());
+      syncBobEnds(currentIndex());
       syncBobTheme();
     };
 
@@ -592,7 +595,7 @@
 
     scrollDown?.addEventListener("click", () => {
       const index = currentIndex();
-      if (index < sections.length - 1) goToIndex(index + 1);
+      if (index < SECTIONS.length - 1) goToIndex(index + 1);
     });
 
     const bindDraggable = (el, handle) => {
@@ -655,9 +658,6 @@
       bindDraggable(floatMenu, dragHandle);
     }
 
-    // Refresh section refs after layout (hash targets)
-    sections = SECTIONS.map(({ id }) => $(id)).filter(Boolean);
-    spySections = floatMeta.map(({ id }) => $(id)).filter(Boolean);
     onScroll();
 
     if (location.hash) {
