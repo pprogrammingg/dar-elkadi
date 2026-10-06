@@ -1,0 +1,49 @@
+---
+description: Nachit site scope, ignored paths, and roadmap discipline
+alwaysApply: true
+---
+
+# Nachit Cuisine
+
+Static catering site: HTML / CSS / JS only. Brand **Nachit**. Menu copy in `menu.md`. Images in `assets/`.
+
+## Do not touch / ignore
+
+Treat these as out of scope unless the user explicitly asks:
+
+- `.dev/`, `_site/`, `__pycache__/`, `.DS_Store`
+- `.git/objects`, `.git/refs`, `.git/logs` (hooks/config OK if asked)
+- Generated deploy staging; never commit `_site/`
+- Sister repos outside this project
+
+Prefer reading / editing:
+
+- `index.html`, `css/`, `js/`, `assets/`, `menu.md`, `roadmap.md`
+- `dev/serve.py`, `dev/stop.py`, `.github/workflows/`
+
+## Roadmap
+
+`roadmap.md` is the living task list. For any **large or meaningful** piece of work:
+
+1. **Before or while starting** — add a clear checkbox task with a short proper description (what + why), under the right section or Sequence.
+2. **While working** — update the task wording if scope changes.
+3. **When done** — mark `[x]`. Remove only if the task was wrong or abandoned; prefer checking off over deleting history.
+4. Skip roadmap churn for tiny one-liners (typo, rename, color tweak).
+
+Format:
+
+```md
+[ ] short title — one-line description of outcome
+```
+
+## Site conventions
+
+- Midnight navy for hero / overview / contact; warm gold accents from the Dar Elkadi logo
+- Menu chapters: olive parchment (`--menu-bg` + texture) + black text; islamic pattern between sections
+- Menu content + overview/float nav driven by `data/menu.json` (via `js/main.js`)
+- Section art: Appetizers `olive_2.png`, Main `olive.png`, Desserts `olive_3.png`, Beverages `jog.png`
+- CSS tokens in `:root` (`--gold-rgb`, `--page-x`, `--corner`, etc.); prefer tokens over new hardcoded colors
+- Nav: `HOME` · `Menu` (`#menu`) · `Contact` (`#contact`)
+- Floating menu after overview: collapsible + draggable; links built from menu sections in `js/main.js`
+- Corner ornament: `assets/patterns/islamic_corner.svg`
+- No frameworks; keep CSS/JS small and readable

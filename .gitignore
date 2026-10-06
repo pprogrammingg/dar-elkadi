@@ -1,0 +1,15 @@
+.dev/
+_site/
+.venv/
+.DS_Store
+*.pyc
+__pycache__/
+
+# Superseded / unused art — keep local, skip remote weight
+assets/olive.png
+assets/olive_2.png
+assets/olive_3.png
+assets/jog.png
+assets/pour.png
+assets/dessert.png
+assets/patterns/islamic_pattern_2_1.png

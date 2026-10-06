@@ -1,0 +1,61 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare site
+        run: |
+          mkdir -p _site/assets/patterns _site/css _site/js _site/data
+          touch _site/.nojekyll
+          cp index.html _site/
+          cp css/styles.css _site/css/
+          cp js/main.js _site/js/
+          cp data/menu.json _site/data/
+          # Only ship assets the live page references (keeps Pages payload small)
+          cp \
+            assets/logo_only_1.jpeg \
+            assets/olive_traced.jpeg \
+            assets/jog.jpeg \
+            assets/dessert.jpeg \
+            assets/pour.jpeg \
+            assets/lantern_traced.png \
+            _site/assets/
+          cp \
+            assets/patterns/islamic_corner.svg \
+            assets/patterns/islamic-tile.svg \
+            assets/patterns/islamic_pattern_2_1.jpeg \
+            assets/patterns/scroll-bob.svg \
+            _site/assets/patterns/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

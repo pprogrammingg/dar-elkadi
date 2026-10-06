@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dar Elkadi — Moroccan Cuisine</title>
+    <meta
+      name="description"
+      content="Dar Elkadi catering — Moroccan and North African food for your table."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="preload"
+      as="image"
+      href="assets/logo_only_1.jpeg"
+      fetchpriority="high"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri:wght@400&family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Source+Sans+3:wght@400;500&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Amiri:wght@400&family=Cormorant+Garamond:ital,wght@0,400;1,400&family=Source+Sans+3:wght@400;500&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="icon" href="assets/logo_only_1.jpeg" type="image/jpeg" />
+  </head>
+  <body>
+    <header class="site-nav" id="site-nav">
+      <a class="nav-home" href="#home">HOME</a>
+      <span class="nav-rule" aria-hidden="true"></span>
+      <div class="nav-end">
+        <a class="nav-link" href="#menu">Menu</a>
+        <a class="nav-link" href="#contact">Contact</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" id="home" aria-label="Home">
+        <div class="hero-corners" aria-hidden="true">
+          <span class="hero-corner hero-corner--tl"></span>
+          <span class="hero-corner hero-corner--tr"></span>
+          <span class="hero-corner hero-corner--bl"></span>
+          <span class="hero-corner hero-corner--br"></span>
+        </div>
+        <div
+          class="hero-logo-wrap"
+          id="hero-logo-wrap"
+          role="button"
+          tabindex="0"
+          aria-label="Play Dar Elkadi film"
+        >
+          <img
+            class="hero-logo"
+            id="hero-logo"
+            src="assets/logo_only_1.jpeg"
+            alt="Dar Elkadi Moroccan Cuisine"
+            width="640"
+            height="640"
+            fetchpriority="high"
+            decoding="async"
+            draggable="false"
+          />
+          <div class="hero-video" id="hero-video" hidden>
+            <div id="hero-yt-player"></div>
+            <button
+              type="button"
+              class="hero-video-close"
+              id="hero-video-close"
+              aria-label="Close video"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="overview" id="menu" aria-label="Menu overview">
+        <header class="section-head">
+          <p class="eyebrow">Menu</p>
+          <h1>Four tables, one kitchen</h1>
+        </header>
+        <div class="overview-frame">
+          <div class="overview-grid" id="overview-grid"></div>
+        </div>
+      </section>
+
+      <div id="menu-chapters"></div>
+
+      <section class="contact" id="contact" aria-label="Contact">
+        <p class="eyebrow">Catering</p>
+        <h2>Contact</h2>
+        <a class="contact-phone" href="tel:+15142162704">514.216.2704</a>
+        <p class="contact-note">
+          Call 3 days for medium orders, 7 days for large orders.
+        </p>
+      </section>
+    </main>
+
+    <aside
+      class="float-menu"
+      id="float-menu"
+      aria-label="Menu navigation"
+      hidden
+    >
+      <div class="float-menu-chrome" id="float-menu-drag">
+        <span class="float-menu-title">Menu</span>
+        <div class="float-menu-actions">
+          <button
+            type="button"
+            class="float-btn"
+            id="float-collapse"
+            aria-expanded="true"
+            aria-controls="float-menu-body"
+            title="Collapse"
+          >
+            −
+          </button>
+        </div>
+      </div>
+      <div class="float-menu-body" id="float-menu-body">
+        <nav aria-label="Chapter links"></nav>
+      </div>
+    </aside>
+
+    <nav class="scroll-bob" id="scroll-bob" aria-label="Section scroll">
+      <div class="scroll-bob-inner">
+        <button
+          type="button"
+          class="scroll-bob-hit scroll-bob-hit--up"
+          id="scroll-bob-up"
+          aria-label="Previous section"
+        ></button>
+        <button
+          type="button"
+          class="scroll-bob-hit scroll-bob-hit--down"
+          id="scroll-bob-down"
+          aria-label="Next section"
+        ></button>
+        <img
+          class="scroll-bob-lantern scroll-bob-lantern--up"
+          src="assets/lantern_traced.png"
+          alt=""
+          width="165"
+          height="396"
+          aria-hidden="true"
+          draggable="false"
+        />
+        <img
+          class="scroll-bob-lantern scroll-bob-lantern--down"
+          src="assets/lantern_traced.png"
+          alt=""
+          width="165"
+          height="396"
+          aria-hidden="true"
+          draggable="false"
+        />
+      </div>
+    </nav>
+
+    <script type="application/json" id="menu-data">
+[
+  {
+    "section": "Appetizers",
+    "items": [
+      { "item_name": "Harira Soup", "description": "", "image": "", "price": 9, "price_note": "" },
+      { "item_name": "Moroccan Salad", "description": "", "image": "", "price": 8, "price_note": "" },
+      { "item_name": "Briwat Cheese", "description": "", "image": "", "price": 9, "price_note": "3 pieces" },
+      { "item_name": "Our Sourdough Breads", "description": "", "image": "", "price": null, "price_note": "" },
+      { "item_name": "Moroccan Bread", "description": "", "image": "", "price": 4, "price_note": "" },
+      { "item_name": "Focaccia", "description": "", "image": "", "price": 18, "price_note": "8 people" }
+    ]
+  },
+  {
+    "section": "Main Menu",
+    "items": [
+      { "item_name": "Fassi Chicken Lemon & Olives", "description": "", "image": "", "price": 16, "price_note": "per person" },
+      { "item_name": "M'hammar — Lamb", "description": "", "image": "", "price": 20, "price_note": "per person" },
+      { "item_name": "Dorade Royal", "description": "", "image": "", "price": 25, "price_note": "per person" }
+    ]
+  },
+  {
+    "section": "Desserts",
+    "items": [
+      { "item_name": "Ghriba Louz", "description": "", "image": "", "price": 12, "price_note": "6 pieces" },
+      { "item_name": "M'hancha Louz", "description": "", "image": "", "price": 18, "price_note": "6 pieces" },
+      { "item_name": "Tiramisu", "description": "", "image": "", "price": 6, "price_note": "1 cup" }
+    ]
+  },
+  {
+    "section": "Beverages",
+    "items": [
+      { "item_name": "Almond Paste & Milk", "description": "", "image": "", "price": 6, "price_note": "1 cup" },
+      { "item_name": "Sparkling Water", "description": "", "image": "", "price": null, "price_note": "" },
+      { "item_name": "Water", "description": "", "image": "", "price": null, "price_note": "" }
+    ]
+  }
+]
+    </script>
+    <script src="js/main.js" defer></script>
+  </body>
+</html>

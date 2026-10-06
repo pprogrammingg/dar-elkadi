@@ -1,0 +1,127 @@
+[
+  {
+    "section": "Appetizers",
+    "items": [
+      {
+        "item_name": "Harira Soup",
+        "description": "",
+        "image": "",
+        "price": 9,
+        "price_note": ""
+      },
+      {
+        "item_name": "Moroccan Salad",
+        "description": "",
+        "image": "",
+        "price": 8,
+        "price_note": ""
+      },
+      {
+        "item_name": "Briwat Cheese",
+        "description": "",
+        "image": "",
+        "price": 9,
+        "price_note": "3 pieces"
+      },
+      {
+        "item_name": "Our Sourdough Breads",
+        "description": "",
+        "image": "",
+        "price": null,
+        "price_note": ""
+      },
+      {
+        "item_name": "Moroccan Bread",
+        "description": "",
+        "image": "",
+        "price": 4,
+        "price_note": ""
+      },
+      {
+        "item_name": "Focaccia",
+        "description": "",
+        "image": "",
+        "price": 18,
+        "price_note": "8 people"
+      }
+    ]
+  },
+  {
+    "section": "Main Menu",
+    "items": [
+      {
+        "item_name": "Fassi Chicken Lemon & Olives",
+        "description": "",
+        "image": "",
+        "price": 16,
+        "price_note": "per person"
+      },
+      {
+        "item_name": "M'hammar — Lamb",
+        "description": "",
+        "image": "",
+        "price": 20,
+        "price_note": "per person"
+      },
+      {
+        "item_name": "Dorade Royal",
+        "description": "",
+        "image": "",
+        "price": 25,
+        "price_note": "per person"
+      }
+    ]
+  },
+  {
+    "section": "Desserts",
+    "items": [
+      {
+        "item_name": "Ghriba Louz",
+        "description": "",
+        "image": "",
+        "price": 12,
+        "price_note": "6 pieces"
+      },
+      {
+        "item_name": "M'hancha Louz",
+        "description": "",
+        "image": "",
+        "price": 18,
+        "price_note": "6 pieces"
+      },
+      {
+        "item_name": "Tiramisu",
+        "description": "",
+        "image": "",
+        "price": 6,
+        "price_note": "1 cup"
+      }
+    ]
+  },
+  {
+    "section": "Beverages",
+    "items": [
+      {
+        "item_name": "Almond Paste & Milk",
+        "description": "",
+        "image": "",
+        "price": 6,
+        "price_note": "1 cup"
+      },
+      {
+        "item_name": "Sparkling Water",
+        "description": "",
+        "image": "",
+        "price": null,
+        "price_note": ""
+      },
+      {
+        "item_name": "Water",
+        "description": "",
+        "image": "",
+        "price": null,
+        "price_note": ""
+      }
+    ]
+  }
+]

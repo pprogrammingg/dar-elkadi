@@ -1,0 +1,12 @@
+# Local / generated
+.dev/
+_site/
+__pycache__/
+*.pyc
+.DS_Store
+
+# Git internals
+.git/objects/
+.git/refs/
+.git/logs/
+.venv/
