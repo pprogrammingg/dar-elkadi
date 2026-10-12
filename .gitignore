@@ -13,6 +13,7 @@ data/campaign.json
 data/*.json
 !data/menu.json
 !data/*.enc.json
+social.md
 
 # Superseded / unused art — keep local, skip remote weight
 assets/olive.png
