@@ -276,14 +276,19 @@
     const logo = $("hero-logo");
     const video = $("hero-video");
     const closeBtn = $("hero-video-close");
-    if (!wrap || !logo || !video) return;
+    const hero = $("home");
+    if (!wrap || !logo || !video) return () => {};
 
     let player = null;
     let starting = false;
     let closeArmed = true;
+    let muted = true;
+    let shuttingDown = false;
 
     const showLogo = () => {
+      shuttingDown = false;
       wrap.classList.remove("is-playing");
+      wrap.style.opacity = "";
       wrap.setAttribute("aria-label", "Play Dar Elkadi film");
       wrap.tabIndex = 0;
       video.hidden = true;
@@ -300,26 +305,26 @@
       if (closeBtn) video.append(closeBtn);
     };
 
-    const bindEndedViaApi = (iframe) => {
-      loadYouTubeApi()
-        .then(() => {
-          player = new window.YT.Player(iframe, {
-            events: {
-              onStateChange: (event) => {
-                if (event.data === window.YT.PlayerState.ENDED) showLogo();
-              },
-            },
-          });
-        })
-        .catch(() => {
-          /* iframe can still play without end-detection */
-        });
+    const unmute = () => {
+      if (!player) return;
+      try {
+        player.unMute();
+        player.setVolume(100);
+        muted = false;
+        wrap.setAttribute("aria-label", "Dar Elkadi film playing");
+      } catch {
+        /* ignore */
+      }
     };
 
-    const playFilm = () => {
-      if (wrap.classList.contains("is-playing") || starting) return;
+    const playFilm = ({ withSound = false } = {}) => {
+      /* Already playing — tap unmutes (browsers block autoplay sound) */
+      if (player && wrap.classList.contains("is-playing")) {
+        if (withSound && muted) unmute();
+        return;
+      }
+      if (starting) return;
 
-      /* YouTube blocks embeds on file:// — open watch page instead */
       if (window.location.protocol === "file:") {
         window.open(YT_WATCH, "_blank", "noopener");
         return;
@@ -327,52 +332,130 @@
 
       starting = true;
       closeArmed = false;
+      shuttingDown = false;
+      muted = !withSound;
 
+      wrap.style.opacity = "";
       wrap.classList.add("is-playing");
-      wrap.setAttribute("aria-label", "Dar Elkadi film playing");
+      wrap.setAttribute(
+        "aria-label",
+        withSound
+          ? "Dar Elkadi film playing"
+          : "Dar Elkadi film playing (muted — tap for sound)"
+      );
       wrap.tabIndex = -1;
       logo.hidden = true;
       video.hidden = false;
 
-      const iframe = document.createElement("iframe");
-      iframe.className = "hero-yt-frame";
-      iframe.id = "hero-yt-player";
-      iframe.title = "Dar Elkadi film";
-      iframe.src =
-        `https://www.youtube.com/embed/${YT_VIDEO_ID}` +
-        `?autoplay=1&rel=0&modestbranding=1&playsinline=1&enablejsapi=1` +
-        `&origin=${encodeURIComponent(window.location.origin)}`;
-      iframe.allow =
-        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
-      iframe.referrerPolicy = "strict-origin-when-cross-origin";
-      iframe.setAttribute("allowfullscreen", "true");
-
-      video.replaceChildren(iframe);
+      const mount = document.createElement("div");
+      mount.id = "hero-yt-player";
+      mount.className = "hero-yt-frame";
+      video.replaceChildren(mount);
       if (closeBtn) {
         closeBtn.style.pointerEvents = "none";
         video.append(closeBtn);
       }
 
-      bindEndedViaApi(iframe);
+      loadYouTubeApi()
+        .then(() => {
+          player = new window.YT.Player(mount, {
+            videoId: YT_VIDEO_ID,
+            width: "100%",
+            height: "100%",
+            playerVars: {
+              autoplay: 1,
+              mute: withSound ? 0 : 1,
+              rel: 0,
+              modestbranding: 1,
+              playsinline: 1,
+              origin: window.location.origin,
+            },
+            events: {
+              onReady: (event) => {
+                try {
+                  if (withSound) {
+                    event.target.unMute();
+                    event.target.setVolume(100);
+                  } else {
+                    event.target.mute();
+                  }
+                  event.target.playVideo();
+                } catch {
+                  /* ignore */
+                }
+              },
+              onStateChange: (event) => {
+                if (event.data === window.YT.PlayerState.ENDED) showLogo();
+              },
+              onError: () => showLogo(),
+            },
+          });
+        })
+        .catch(() => showLogo())
+        .finally(() => {
+          window.setTimeout(() => {
+            closeArmed = true;
+            if (closeBtn) closeBtn.style.pointerEvents = "";
+            starting = false;
+          }, 700);
+        });
+    };
 
-      window.setTimeout(() => {
-        closeArmed = true;
-        if (closeBtn) closeBtn.style.pointerEvents = "";
-        starting = false;
-      }, 700);
+    /* Fade picture + sound as the hero leaves the viewport, then stop */
+    const onScrollFade = () => {
+      if (!wrap.classList.contains("is-playing") || !hero || shuttingDown) {
+        return;
+      }
+
+      const rect = hero.getBoundingClientRect();
+      const view = Math.min(rect.height, window.innerHeight);
+      const visible =
+        Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
+      const ratio = view > 0 ? clamp(visible / view, 0, 1) : 0;
+      /* Full until ~75% left, then fade to 0 by ~30% */
+      const fade = clamp((ratio - 0.3) / 0.45, 0, 1);
+
+      wrap.style.opacity = String(0.15 + fade * 0.85);
+
+      if (player && !muted) {
+        try {
+          player.setVolume(Math.round(fade * 100));
+        } catch {
+          /* ignore */
+        }
+      }
+
+      if (fade <= 0.02) {
+        shuttingDown = true;
+        try {
+          player?.pauseVideo();
+        } catch {
+          /* ignore */
+        }
+        showLogo();
+      }
     };
 
     wrap.addEventListener("click", (event) => {
       if (event.target.closest(".hero-video-close")) return;
-      if (event.target.closest("iframe, .hero-yt-frame")) return;
-      if (wrap.classList.contains("is-playing")) return;
-      playFilm();
+      if (event.target.closest("iframe, .hero-yt-frame, #hero-yt-player")) {
+        return;
+      }
+      if (wrap.classList.contains("is-playing")) {
+        if (muted) unmute();
+        return;
+      }
+      playFilm({ withSound: true });
     });
 
     wrap.addEventListener("keydown", (event) => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        if (!wrap.classList.contains("is-playing")) playFilm();
+        if (wrap.classList.contains("is-playing")) {
+          if (muted) unmute();
+        } else {
+          playFilm({ withSound: true });
+        }
       }
     });
 
@@ -388,6 +471,15 @@
         showLogo();
       }
     });
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (!reduceMotion && window.location.protocol !== "file:") {
+      playFilm({ withSound: false });
+    }
+
+    return onScrollFade;
   };
 
   const boot = async () => {
@@ -402,7 +494,7 @@
     const scrollDown = $("scroll-bob-down");
     const floatNav = floatMenu?.querySelector("nav");
 
-    bindHeroVideo();
+    const heroVideoOnScroll = bindHeroVideo();
 
     const embedded = () => {
       const el = $("menu-data");
@@ -580,6 +672,7 @@
         updateFloatVisibility();
         updateSpy();
         updateScrollBob();
+        heroVideoOnScroll();
         ticking = false;
       });
     };
