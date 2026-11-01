@@ -26,10 +26,10 @@ PUBLIC_DIRS = {
 
 ASSET_FILES = [
     "logo_only_1.jpeg",
-    "olive_2.jpeg",
-    "tagine_fassi.jpeg",
-    "dessert.jpeg",
-    "pour.jpeg",
+    "olives.png",
+    "tagine.png",
+    "dessert.png",
+    "drinks.png",
     "lantern_traced.png",
     "og-image.jpg",
     "apple-touch-icon.png",
@@ -39,6 +39,7 @@ PATTERN_FILES = [
     "islamic-tile.svg",
     "islamic_pattern_2_1.jpeg",
     "scroll-bob.svg",
+    "islamic_interlace.svg",
 ]
 
 
@@ -86,6 +87,12 @@ def main() -> int:
             ROOT / "assets" / "patterns" / name,
             OUT / "assets" / "patterns" / name,
         )
+
+    gallery_src = ROOT / "assets" / "gallery"
+    if gallery_src.is_dir():
+        for src in sorted(gallery_src.iterdir()):
+            if src.is_file() and src.name != ".DS_Store":
+                copy_file(src, OUT / "assets" / "gallery" / src.name)
 
     for name in ("_redirects", "_headers", "robots.txt", "sitemap.xml"):
         src = ROOT / name

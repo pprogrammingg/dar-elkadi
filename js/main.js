@@ -6,28 +6,28 @@
     Appetizers: {
       id: "appetizers",
       ar: "المقبلات",
-      image: "assets/olive_2.jpeg?v=2",
+      image: "assets/olives.png?v=1",
       art: "tr",
       layout: "split-end",
     },
     "Main Menu": {
       id: "main-menu",
       ar: "الأطباق الرئيسية",
-      image: "assets/tagine_fassi.jpeg?v=2",
+      image: "assets/tagine.png?v=1",
       art: "bl",
       layout: "split",
     },
     Desserts: {
       id: "desserts",
       ar: "الحلويات",
-      image: "assets/dessert.jpeg",
+      image: "assets/dessert.png?v=2",
       art: "br",
       layout: "split-end",
     },
     Beverages: {
       id: "beverages",
       ar: "المشروبات",
-      image: "assets/pour.jpeg",
+      image: "assets/drinks.png?v=1",
       art: "bl",
       layout: "split",
     },
@@ -130,6 +130,9 @@
         media.setAttribute("aria-hidden", "true");
         const art = document.createElement("img");
         art.className = "chapter-art chapter-art--fill";
+        if (meta.fit === "contain") {
+          art.classList.add("chapter-art--contain");
+        }
         art.src = meta.image;
         art.alt = "";
         art.loading = "lazy";
@@ -279,15 +282,54 @@
     const hero = $("home");
     if (!wrap || !logo || !video) return () => {};
 
+    const PRELOAD_READY = 0.14;
+    const PRELOAD_MAX_MS = 9000;
+
     let player = null;
     let starting = false;
     let closeArmed = true;
     let muted = true;
     let shuttingDown = false;
+    let preloading = false;
+    let revealed = false;
+    let preloadPoll = 0;
+    let preloadStartedAt = 0;
+
+    const slowLink = () => {
+      const net = navigator.connection;
+      if (!net) return false;
+      if (net.saveData) return true;
+      return /^(slow-2g|2g)$/i.test(net.effectiveType || "");
+    };
+
+    const heroVisibleEnough = () => {
+      if (!hero) return true;
+      const rect = hero.getBoundingClientRect();
+      const view = Math.min(rect.height, window.innerHeight);
+      const visible =
+        Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0);
+      return view > 0 ? visible / view > 0.55 : false;
+    };
+
+    const loadedFraction = () => {
+      try {
+        return player?.getVideoLoadedFraction?.() ?? 0;
+      } catch {
+        return 0;
+      }
+    };
 
     const showLogo = () => {
       shuttingDown = false;
-      wrap.classList.remove("is-playing");
+      preloading = false;
+      revealed = false;
+      starting = false;
+      if (preloadPoll) {
+        clearInterval(preloadPoll);
+        preloadPoll = 0;
+      }
+      wrap.classList.remove("is-playing", "is-preloading");
+      video.classList.remove("is-preloading");
       wrap.style.opacity = "";
       wrap.setAttribute("aria-label", "Play Dar Elkadi film");
       wrap.tabIndex = 0;
@@ -317,35 +359,55 @@
       }
     };
 
-    const playFilm = ({ withSound = false } = {}) => {
-      /* Already playing — tap unmutes (browsers block autoplay sound) */
-      if (player && wrap.classList.contains("is-playing")) {
+    const revealFilm = ({ withSound = false } = {}) => {
+      if (revealed) {
         if (withSound && muted) unmute();
         return;
       }
-      if (starting) return;
-
-      if (window.location.protocol === "file:") {
-        window.open(YT_WATCH, "_blank", "noopener");
-        return;
+      revealed = true;
+      preloading = false;
+      if (preloadPoll) {
+        clearInterval(preloadPoll);
+        preloadPoll = 0;
       }
 
-      starting = true;
-      closeArmed = false;
-      shuttingDown = false;
       muted = !withSound;
-
       wrap.style.opacity = "";
+      wrap.classList.remove("is-preloading");
       wrap.classList.add("is-playing");
+      video.classList.remove("is-preloading");
+      video.hidden = false;
+      logo.hidden = true;
+      wrap.tabIndex = -1;
       wrap.setAttribute(
         "aria-label",
         withSound
           ? "Dar Elkadi film playing"
           : "Dar Elkadi film playing (muted — tap for sound)"
       );
-      wrap.tabIndex = -1;
-      logo.hidden = true;
-      video.hidden = false;
+
+      try {
+        player?.mute?.();
+        if (withSound) {
+          player?.unMute?.();
+          player?.setVolume?.(100);
+        }
+        player?.seekTo?.(0, true);
+        player?.playVideo?.();
+      } catch {
+        /* ignore */
+      }
+
+      closeArmed = true;
+      if (closeBtn) closeBtn.style.pointerEvents = "";
+      starting = false;
+    };
+
+    const mountPlayer = ({ withSound = false, preload = false } = {}) => {
+      starting = true;
+      closeArmed = false;
+      shuttingDown = false;
+      muted = !withSound;
 
       const mount = document.createElement("div");
       mount.id = "hero-yt-player";
@@ -364,7 +426,7 @@
             height: "100%",
             playerVars: {
               autoplay: 1,
-              mute: withSound ? 0 : 1,
+              mute: 1,
               rel: 0,
               modestbranding: 1,
               playsinline: 1,
@@ -373,19 +435,17 @@
             events: {
               onReady: (event) => {
                 try {
-                  if (withSound) {
-                    event.target.unMute();
-                    event.target.setVolume(100);
-                  } else {
-                    event.target.mute();
-                  }
+                  event.target.mute();
                   event.target.playVideo();
                 } catch {
                   /* ignore */
                 }
+                if (!preload) revealFilm({ withSound });
               },
               onStateChange: (event) => {
-                if (event.data === window.YT.PlayerState.ENDED) showLogo();
+                if (event.data === window.YT.PlayerState.ENDED && revealed) {
+                  showLogo();
+                }
               },
               onError: () => showLogo(),
             },
@@ -393,16 +453,80 @@
         })
         .catch(() => showLogo())
         .finally(() => {
-          window.setTimeout(() => {
-            closeArmed = true;
-            if (closeBtn) closeBtn.style.pointerEvents = "";
-            starting = false;
-          }, 700);
+          if (!preload) {
+            window.setTimeout(() => {
+              closeArmed = true;
+              if (closeBtn) closeBtn.style.pointerEvents = "";
+              starting = false;
+            }, 700);
+          }
         });
+    };
+
+    const playFilm = ({ withSound = false, preload = false } = {}) => {
+      if (revealed && wrap.classList.contains("is-playing")) {
+        if (withSound && muted) unmute();
+        return;
+      }
+
+      if (window.location.protocol === "file:") {
+        window.open(YT_WATCH, "_blank", "noopener");
+        return;
+      }
+
+      /* Preload already running — tap skips the wait and plays with sound */
+      if (preloading && player) {
+        revealFilm({ withSound: true });
+        return;
+      }
+      if (starting) return;
+
+      if (preload) {
+        preloading = true;
+        revealed = false;
+        preloadStartedAt = Date.now();
+        wrap.classList.add("is-preloading");
+        video.classList.add("is-preloading");
+        video.hidden = false;
+        logo.hidden = false;
+        mountPlayer({ withSound: false, preload: true });
+
+        preloadPoll = window.setInterval(() => {
+          if (!preloading || revealed) {
+            clearInterval(preloadPoll);
+            preloadPoll = 0;
+            return;
+          }
+          if (!heroVisibleEnough()) {
+            showLogo();
+            return;
+          }
+          const frac = loadedFraction();
+          const waited = Date.now() - preloadStartedAt;
+          if (frac >= PRELOAD_READY || (waited > PRELOAD_MAX_MS && frac > 0.04)) {
+            revealFilm({ withSound: false });
+          } else if (waited > PRELOAD_MAX_MS) {
+            showLogo();
+          }
+        }, 200);
+        return;
+      }
+
+      wrap.style.opacity = "";
+      wrap.classList.add("is-playing");
+      video.hidden = false;
+      logo.hidden = true;
+      wrap.tabIndex = -1;
+      mountPlayer({ withSound, preload: false });
+      revealed = true;
     };
 
     /* Fade picture + sound as the hero leaves the viewport, then stop */
     const onScrollFade = () => {
+      if (preloading && !heroVisibleEnough()) {
+        showLogo();
+        return;
+      }
       if (!wrap.classList.contains("is-playing") || !hero || shuttingDown) {
         return;
       }
@@ -475,11 +599,295 @@
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
-    if (!reduceMotion && window.location.protocol !== "file:") {
-      playFilm({ withSound: false });
+    if (
+      !reduceMotion &&
+      window.location.protocol !== "file:" &&
+      !slowLink()
+    ) {
+      playFilm({ withSound: false, preload: true });
     }
 
     return onScrollFade;
+  };
+
+  const bindGallery = async () => {
+    const root = $("gallery");
+    const viewport = $("gallery-viewport");
+    const dotsHost = $("gallery-dots");
+    const hint = $("gallery-hint");
+    const navLink = $("nav-gallery");
+    if (!root || !viewport || !dotsHost) return false;
+
+    const DWELL_MS = 4200;
+    const ROLL_MS = 900;
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    const finePointer = window.matchMedia(
+      "(hover: hover) and (pointer: fine)"
+    ).matches;
+
+    let items = [];
+    try {
+      const res = await fetch("assets/gallery/description.json", { cache: "no-store" });
+      if (!res.ok) return false;
+      items = await res.json();
+    } catch {
+      return false;
+    }
+
+    items = (Array.isArray(items) ? items : []).filter(
+      (item) => item && item.image_name && item.description
+    );
+    if (!items.length) return false;
+
+    const slides = [];
+    const dots = [];
+    items.forEach((item, index) => {
+      const title = item.title || String(item.image_name).replace(/\.[^.]+$/, "").replace(/_/g, " ");
+      const slide = document.createElement("article");
+      slide.className = "gallery-slide";
+      slide.setAttribute("role", "group");
+      slide.setAttribute("aria-roledescription", "slide");
+      slide.setAttribute("aria-label", `${index + 1} of ${items.length}: ${title}`);
+      slide.tabIndex = 0;
+
+      const card = document.createElement("div");
+      card.className = "gallery-card";
+
+      const flip = document.createElement("div");
+      flip.className = "gallery-flip";
+
+      const front = document.createElement("div");
+      front.className = "gallery-face gallery-face--front";
+
+      const img = document.createElement("img");
+      img.alt = title;
+      img.decoding = "async";
+      img.loading = "eager";
+      img.addEventListener("load", () => {
+        front.classList.add("has-photo");
+      });
+      img.src = `assets/gallery/${item.image_name}`;
+
+      const fallback = document.createElement("span");
+      fallback.className = "gallery-fallback";
+      fallback.textContent = title;
+
+      front.append(img, fallback);
+
+      const back = document.createElement("div");
+      back.className = "gallery-face gallery-face--back";
+
+      const backTitle = document.createElement("p");
+      backTitle.className = "gallery-back-title";
+      backTitle.textContent = title;
+
+      const backCopy = document.createElement("p");
+      backCopy.className = "gallery-back-copy";
+      backCopy.textContent = item.description;
+
+      back.append(backTitle, backCopy);
+      flip.append(front, back);
+      card.append(flip);
+      slide.append(card);
+      viewport.append(slide);
+      slides.push(slide);
+
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "gallery-dot";
+      dot.setAttribute("aria-label", `Show ${title}`);
+      dotsHost.append(dot);
+      dots.push(dot);
+    });
+
+    root.hidden = false;
+    if (navLink) navLink.hidden = false;
+
+    let index = 0;
+    let busy = false;
+    let hold = false;
+    let dwellTimer = 0;
+    let inView = false;
+    let discovered = false;
+
+    const current = () => slides[index];
+
+    const markDiscovered = () => {
+      if (discovered || !hint) return;
+      discovered = true;
+      hint.hidden = true;
+    };
+
+    const setFlipped = (on) => {
+      const slide = current();
+      if (!slide) return;
+      slide.classList.toggle("is-flipped", on);
+      slide.setAttribute("aria-pressed", String(on));
+      if (on) markDiscovered();
+    };
+
+    const isFlipped = () => current()?.classList.contains("is-flipped");
+
+    const syncDots = () => {
+      dots.forEach((dot, i) => {
+        dot.classList.toggle("is-active", i === index);
+        dot.setAttribute("aria-current", i === index ? "true" : "false");
+      });
+    };
+
+    const clearDwell = () => {
+      if (dwellTimer) {
+        clearTimeout(dwellTimer);
+        dwellTimer = 0;
+      }
+    };
+
+    const canAdvance = () =>
+      inView &&
+      !busy &&
+      !hold &&
+      !isFlipped() &&
+      !document.hidden &&
+      slides.length > 1;
+
+    const schedule = () => {
+      clearDwell();
+      if (!canAdvance()) return;
+      dwellTimer = window.setTimeout(() => {
+        goTo((index + 1) % slides.length, 1);
+      }, DWELL_MS);
+    };
+
+    const goTo = (next, direction = 0) => {
+      if (busy || next === index || !slides[next]) return;
+      const from = current();
+      const to = slides[next];
+      from.classList.remove("is-flipped");
+      from.removeAttribute("aria-pressed");
+
+      if (reduceMotion) {
+        from.classList.remove("is-current");
+        to.classList.add("is-current");
+        index = next;
+        syncDots();
+        schedule();
+        return;
+      }
+
+      let dir = direction;
+      if (!dir) {
+        const n = slides.length;
+        const forward = (next - index + n) % n;
+        const backward = (index - next + n) % n;
+        dir = forward <= backward ? 1 : -1;
+      }
+      busy = true;
+      clearDwell();
+      to.style.transition = "none";
+      to.style.transform = `translateX(${dir > 0 ? 100 : -100}%)`;
+      void to.offsetWidth;
+      to.style.transition = "";
+      from.classList.add("is-exit");
+      from.style.transform = `translateX(${dir > 0 ? -100 : 100}%)`;
+      to.classList.add("is-enter");
+      to.style.transform = "translateX(0)";
+
+      const finish = () => {
+        from.classList.remove("is-current", "is-exit");
+        from.style.transform = "";
+        to.classList.remove("is-enter");
+        to.classList.add("is-current");
+        to.style.transform = "";
+        index = next;
+        busy = false;
+        syncDots();
+        if (finePointer && to.matches(":hover")) setFlipped(true);
+        schedule();
+      };
+
+      window.setTimeout(finish, ROLL_MS);
+    };
+
+    slides[0].classList.add("is-current");
+    syncDots();
+
+    slides.forEach((slide) => {
+      slide.addEventListener("pointerenter", (event) => {
+        if (event.pointerType !== "mouse" || busy || slide !== current()) return;
+        hold = true;
+        clearDwell();
+        setFlipped(true);
+      });
+      slide.addEventListener("pointerleave", (event) => {
+        if (event.pointerType !== "mouse") return;
+        setFlipped(false);
+        hold = false;
+        schedule();
+      });
+      slide.addEventListener("click", (event) => {
+        if (event.pointerType === "mouse" || !event.pointerType) return;
+        event.preventDefault();
+        if (busy || slide !== current()) return;
+        const next = !isFlipped();
+        setFlipped(next);
+        hold = next;
+        if (next) clearDwell();
+        else schedule();
+      });
+      slide.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        if (busy || slide !== current()) return;
+        const next = !isFlipped();
+        setFlipped(next);
+        hold = next;
+        if (next) clearDwell();
+        else schedule();
+      });
+    });
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener("click", () => {
+        if (i === index) return;
+        hold = false;
+        setFlipped(false);
+        goTo(i);
+      });
+    });
+
+    viewport.addEventListener("focusin", () => {
+      hold = true;
+      clearDwell();
+    });
+    viewport.addEventListener("focusout", () => {
+      hold = isFlipped();
+      if (!hold) schedule();
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) clearDwell();
+      else schedule();
+    });
+
+    const watch = $("gallery-viewport") || root;
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          inView = entries.some((entry) => entry.isIntersecting);
+          if (inView) schedule();
+          else clearDwell();
+        },
+        { threshold: 0.2 }
+      );
+      io.observe(watch);
+    } else {
+      inView = true;
+      schedule();
+    }
+
+    return true;
   };
 
   const boot = async () => {
@@ -495,6 +903,7 @@
     const floatNav = floatMenu?.querySelector("nav");
 
     const heroVideoOnScroll = bindHeroVideo();
+    const galleryReadyPromise = bindGallery();
 
     const embedded = () => {
       const el = $("menu-data");
@@ -513,6 +922,7 @@
       requestAnimationFrame(() => requestAnimationFrame(r))
     );
     const chapterMeta = buildChapters(menu);
+    const galleryReady = await galleryReadyPromise;
 
     fetch("data/menu.json", { cache: "no-store" })
       .then((res) => (res.ok ? res.json() : null))
@@ -528,6 +938,7 @@
 
     const SECTIONS = [
       { id: "home" },
+      ...(galleryReady ? [{ id: "gallery", float: "Gallery" }] : []),
       { id: "menu" },
       ...chapterMeta,
       { id: "contact", float: "Contact" },

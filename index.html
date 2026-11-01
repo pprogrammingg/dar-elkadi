@@ -60,7 +60,7 @@
         rel="stylesheet"
       />
     </noscript>
-    <link rel="stylesheet" href="css/styles.css?v=9" />
+    <link rel="stylesheet" href="css/styles.css?v=23" />
     <link rel="icon" href="assets/logo_only_1.jpeg" type="image/jpeg" />
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
   </head>
@@ -69,6 +69,7 @@
       <a class="nav-home" href="#home">HOME</a>
       <span class="nav-rule" aria-hidden="true"></span>
       <div class="nav-end">
+        <a class="nav-link" href="#gallery" id="nav-gallery" hidden>Gallery</a>
         <a class="nav-link" href="#menu">Menu</a>
         <a class="nav-link" href="#contact">Contact</a>
       </div>
@@ -111,6 +112,25 @@
               ×
             </button>
           </div>
+        </div>
+      </section>
+
+      <section class="gallery" id="gallery" aria-label="Dish gallery" hidden>
+        <header class="section-head">
+          <p class="eyebrow">Gallery</p>
+          <h2>From the kitchen</h2>
+        </header>
+        <div
+          class="gallery-stage"
+          id="gallery-stage"
+          aria-roledescription="carousel"
+          aria-live="off"
+        >
+          <div class="gallery-frame">
+            <div class="gallery-viewport" id="gallery-viewport"></div>
+          </div>
+          <div class="gallery-dots" id="gallery-dots"></div>
+          <p class="gallery-hint" id="gallery-hint"></p>
         </div>
       </section>
 
@@ -249,6 +269,6 @@
   }
 ]
     </script>
-    <script src="js/main.js?v=5" defer></script>
+    <script src="js/main.js?v=11" defer></script>
   </body>
 </html>

@@ -57,11 +57,16 @@ Admin: `https://darelkadi.ca/campaign` → password gate (session for the tab).
 [x] admin gate — AES-GCM encrypt via `secrets/password` (gitignored); `/campaign` unlock UI
 [x] Cloudflare Pages — `_site` build, `_redirects`/`_headers`, `darelkadi.ca` ready
 [x] campaign form — name / status / last contacted / feedback; stale-first sort; yellow→green rows
+[x] hero film — keep logo until YouTube is buffered, then play, then return to logo
 [x] campaign form — name / status / last contacted / feedback; sort stale (&gt;30d) first
+[x] gallery — rolling dish photos above Menu; hover/tap flip to copy from `assets/gallery/description.json`
+[x] gallery PNGs — `chicken` · `beef` · `almond_cookies` · `almond_shake` mapped in `description.json`
+[x] gallery frame — same islamic-tile `border-image` as the menu overview; photo sits in the content box
+[ ] gallery `bread.png` — waiting for description before it joins the roll
 
 ## design
 
-[x] Sectional page: hero → 5-column overview → chapters → contact
+[x] Sectional page: hero → gallery → 5-column overview → chapters → contact
 [x] Midnight navy background for the whole site
 [x] Nav: `HOME ---------------------------- Menu  Contact`
 [x] Floating menu appears after overview, collapsible and movable
@@ -80,7 +85,7 @@ Admin: `https://darelkadi.ca/campaign` → password gate (session for the tab).
 [x] `assets/` for logos and later dish photos
 [x] `menu.md` — full menu source of truth
 
-Section ids: `#home` `#menu` `#appetizers` `#main-menu` `#desserts` `#beverages` `#contact`
+Section ids: `#home` `#gallery` `#menu` `#appetizers` `#main-menu` `#desserts` `#beverages` `#contact`
 
 ## hero
 
@@ -91,8 +96,9 @@ Section ids: `#home` `#menu` `#appetizers` `#main-menu` `#desserts` `#beverages`
 
 ## navigation
 
-[x] Fixed bar: HOME · rule · Menu · Contact
+[x] Fixed bar: HOME · rule · Gallery · Menu · Contact
 [x] HOME → `#home`
+[x] Gallery → `#gallery` (rolling dish photos)
 [x] Menu → `#menu` (overview)
 [x] Contact → `#contact` (phone + lead times)
 [x] Transparent over hero, solid after scroll
@@ -111,7 +117,7 @@ Section ids: `#home` `#menu` `#appetizers` `#main-menu` `#desserts` `#beverages`
 
 [x] Pages built from `data/menu.json` (Appetizers / Main Menu / Desserts / Beverages)
 [x] Olive parchment chapter pages with black menu text
-[x] Section art: Appetizers `olive_2.png`, Main `olive.png`, Desserts `olive_3.png`, Beverages `jog.png`
+[x] Section art: Appetizers `olives.png`, Main `tagine.png`, Desserts `dessert.png`, Beverages `drinks.png`
 [x] No separators between dish items
 [x] Section separators use `assets/patterns/islamic_pattern_2_1.png`
 
@@ -133,7 +139,9 @@ Section ids: `#home` `#menu` `#appetizers` `#main-menu` `#desserts` `#beverages`
 [x] `assets/logo_only_1.jpeg` + `assets/patterns/islamic_corner.svg`
 [x] Menu art: `olive.png` / `olive_2.png` / `olive_3.png` / `lantern.png` / `jog.png`
 [x] `assets/patterns/islamic_pattern_2_1.png` (converted from jpeg) for chapter separators
-[ ] Optional: dish photos later
+[x] Gallery copy in `assets/gallery/description.json` (image_name + title + description)
+[x] Gallery PNGs: `chicken.png` · `beef.png` · `almond_cookies.png` · `almond_shake.png`
+[ ] `bread.png` — hold until description is written
 
 ## local python serve
 

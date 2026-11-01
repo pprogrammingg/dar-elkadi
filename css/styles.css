@@ -153,7 +153,10 @@ button {
   --hero-stage: min(78vw, 30rem);
   position: relative;
   z-index: 1;
+  justify-self: center;
   width: var(--hero-stage);
+  max-width: 100%;
+  min-width: 0;
   height: var(--hero-stage);
   aspect-ratio: 1;
   overflow: hidden;
@@ -174,8 +177,8 @@ button {
 }
 
 .hero-logo-wrap.is-playing {
-  /* same height as logo square; width opens to 16:9 */
-  width: min(92vw, calc(var(--hero-stage) * 16 / 9));
+  /* stay inside hero padding so left/right gaps match */
+  width: min(100%, calc(var(--hero-stage) * 16 / 9));
   height: auto;
   aspect-ratio: 16 / 9;
   border-radius: clamp(0.85rem, 2.2vw, 1.35rem);
@@ -184,6 +187,8 @@ button {
 }
 
 .hero-logo {
+  position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
   height: 100%;
@@ -204,6 +209,17 @@ button {
   overflow: hidden;
   border-radius: inherit;
   background: var(--bg);
+}
+
+/* Buffer off-stage behind the logo until enough of the film is ready */
+.hero-video.is-preloading {
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hero-video.is-preloading .hero-video-close {
+  display: none;
 }
 
 .hero-video[hidden] {
@@ -311,12 +327,14 @@ button {
 }
 
 .overview,
+.gallery,
 .contact {
   padding: clamp(4rem, 10vh, 7rem) var(--page-x);
   border-top: 1px solid var(--line-faint);
 }
 
 .overview h1,
+.gallery h2,
 .chapter h2,
 .contact h2 {
   margin: 0;
@@ -412,6 +430,209 @@ button {
   font-size: 0.82rem;
   line-height: 1.4;
   color: var(--muted);
+}
+
+/* ——— Gallery ——— */
+
+.gallery .section-head {
+  margin-inline: auto;
+  text-align: center;
+}
+
+.gallery-stage {
+  display: grid;
+  justify-items: center;
+  gap: 1.1rem;
+}
+
+.gallery-frame {
+  width: min(52rem, 100%);
+  padding: 5px;
+  background: var(--bg);
+  border: 22px solid transparent;
+  border-image-source: var(--corner-tile);
+  border-image-slice: 48;
+  border-image-width: 22px;
+  border-image-repeat: round;
+}
+
+.gallery-viewport {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  max-height: 72svh;
+  overflow: hidden;
+  border-radius: 0.55rem;
+  background: var(--bg-elevated);
+  perspective: 1400px;
+}
+
+.gallery-slide {
+  position: absolute;
+  inset: 0;
+  transform: translateX(100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.gallery-slide.is-current {
+  transform: translateX(0);
+  pointer-events: auto;
+  z-index: 2;
+}
+
+.gallery-slide.is-enter,
+.gallery-slide.is-exit {
+  transition: transform 0.9s var(--ease);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.gallery-card {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gallery-flip {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.7s var(--ease);
+}
+
+.gallery-slide.is-flipped .gallery-flip {
+  transform: rotateY(180deg);
+}
+
+.gallery-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.gallery-face--front {
+  transform: rotateY(0deg);
+  background:
+    radial-gradient(
+      ellipse 80% 60% at 50% 40%,
+      rgba(var(--gold-rgb), 0.16),
+      transparent 62%
+    ),
+    var(--bg-elevated);
+}
+
+.gallery-face--front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+}
+
+.gallery-face--front.has-photo img {
+  opacity: 1;
+}
+
+.gallery-fallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: 1.5rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 4vw, 2.1rem);
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: var(--gold);
+}
+
+.gallery-face--front.has-photo .gallery-fallback {
+  display: none;
+}
+
+.gallery-face--back {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.85rem;
+  padding: clamp(1.2rem, 4vw, 2rem);
+  overflow: auto;
+  transform: rotateY(180deg);
+  background:
+    linear-gradient(
+      180deg,
+      rgba(var(--gold-rgb), 0.12),
+      transparent 42%
+    ),
+    var(--bg-elevated);
+  color: var(--ink);
+}
+
+.gallery-back-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.35rem, 3.4vw, 1.85rem);
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+  color: var(--gold);
+}
+
+.gallery-back-copy {
+  margin: 0;
+  font-size: clamp(0.9rem, 2.4vw, 1.05rem);
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.gallery-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.55rem;
+}
+
+.gallery-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  padding: 0;
+  border: 1px solid rgba(var(--gold-rgb), 0.55);
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.gallery-dot.is-active {
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
+.gallery-hint {
+  margin: 0;
+  min-height: 1.2em;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+}
+
+.gallery-hint::after {
+  content: "Hover while it rests — the dish turns to its story";
+}
+
+@media (hover: none) {
+  .gallery-hint::after {
+    content: "Tap a resting dish for the story · tap again to keep rolling";
+  }
 }
 
 /* ——— Chapters (menu pages) ——— */
@@ -536,6 +757,11 @@ button {
   height: 100%;
   object-fit: cover;
   object-position: center;
+}
+
+.chapter--split .chapter-art--contain {
+  object-fit: contain;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
 }
 
 .chapter--split .chapter-inner {
@@ -1033,6 +1259,23 @@ button {
 }
 
 @media (max-width: 560px) {
+  .gallery-frame {
+    width: 100%;
+    border-width: 14px;
+    border-image-width: 14px;
+    padding: 3px;
+  }
+
+  .gallery-viewport {
+    max-height: 58svh;
+    border-radius: 0.4rem;
+  }
+
+  .gallery-hint {
+    letter-spacing: 0.1em;
+    max-width: 22rem;
+  }
+
   .overview-grid {
     grid-template-columns: 1fr;
   }
@@ -1068,7 +1311,10 @@ button {
   .hero-logo,
   .float-menu,
   .scroll-bob-inner,
-  .scroll-bob-hit {
+  .scroll-bob-hit,
+  .gallery-slide.is-enter,
+  .gallery-slide.is-exit,
+  .gallery-flip {
     animation: none;
     transition: none;
   }

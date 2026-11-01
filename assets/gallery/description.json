@@ -1,0 +1,22 @@
+[
+  {
+    "image_name": "chicken.png",
+    "title": "Fassi Chicken",
+    "description": "Tender, slow-simmered chicken infused with aromatic ginger, garlic, and precious saffron. Finished with luscious preserved lemon confit strips, warm herbs, and vibrant green olives for a bright, savory flavor balance rooted in Moroccan tradition."
+  },
+  {
+    "image_name": "beef.png",
+    "title": "L'ham bel Barkouk",
+    "description": "Succulent, melt-in-your-mouth beef braised in warming spices, cinnamon, and saffron threads. Elegantly crowned with sweet caramelized prunes, whole crunchy toasted almonds, delicate almond flakes, and a fine dusting of powdered sugar—a classic celebration of Moroccan savory-sweet harmony."
+  },
+  {
+    "image_name": "almond_cookies.png",
+    "title": "Ghriba Louz",
+    "description": "Handcrafted Moroccan almond cookies infused with orange blossom water, baked to perfection with a soft, chewy center and a delicate dusting of powdered sugar."
+  },
+  {
+    "image_name": "almond_shake.png",
+    "title": "Traditional Moroccan Almond Shakedown",
+    "description": "A blend of fine almond paste and fragrant orange blossom water. Made to order your way: with creamy milk, or dairy-free with water."
+  }
+]
